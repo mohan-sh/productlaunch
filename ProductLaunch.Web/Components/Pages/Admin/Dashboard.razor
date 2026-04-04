@@ -1,0 +1,232 @@
+@namespace ProductLaunch.Web.Components.Pages.Admin.Dashboard
+
+@page "/Dashboard"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using ProductLaunch.Model
+@using System.Linq
+@using System.Text
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject ILogger<Dashboard> Logger
+
+<div class="container" style="margin-top:30px;">
+    <div class="clearfix">
+        <h2 style="display:inline-block;">
+            Welcome, <span>@welcomeUser</span>
+        </h2>
+        <button class="btn btn-danger pull-right" @onclick="btnLogout_Click">Logout</button>
+    </div>
+    <hr />
+    <span class="lead">@lblTotal</span>
+    <div class="row" style="margin-top:15px; margin-bottom:15px;">
+        <div class="col-sm-3">
+            <select class="form-control"
+                    value="@selectedCountry"
+                    @onchange="CountrySelectionChanged">
+                <option value="">All Countries</option>
+                @foreach (var c in countries)
+                {
+                    <option value="@c.CountryCode">@c.CountryName</option>
+                }
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <select class="form-control"
+                    value="@selectedRole"
+                    @onchange="RoleSelectionChanged">
+                <option value="">All Roles</option>
+                @foreach (var r in roles)
+                {
+                    <option value="@r.RoleCode">@r.RoleName</option>
+                }
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <input type="text"
+                   class="form-control"
+                   placeholder="Search name or email"
+                   @bind="searchText" />
+        </div>
+        <div class="col-sm-3">
+            <button class="btn btn-primary" @onclick="btnFilter_Click">Filter</button>
+            <button class="btn btn-default" @onclick="btnExport_Click">Export CSV</button>
+        </div>
+    </div>
+
+    @if (prospects == null || !prospects.Any())
+    {
+        <p>No prospects found</p>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Company</th>
+                    <th>Country</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in prospects)
+                {
+                    <tr>
+                        <td>@p.FirstName</td>
+                        <td>@p.LastName</td>
+                        <td>@p.EmailAddress</td>
+                        <td>@p.CompanyName</td>
+                        <td>@p.Country?.CountryName</td>
+                        <td>@p.Role?.RoleName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private string welcomeUser = string.Empty;
+    private string lblTotal = string.Empty;
+    private string selectedCountry = string.Empty;
+    private string selectedRole = string.Empty;
+    private string searchText = string.Empty;
+
+    private List<Country> countries = new List<Country>();
+    private List<Role> roles = new List<Role>();
+    private List<Prospect> prospects = new List<Prospect>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var result = await ProtectedSessionStore.GetAsync<string>("AdminUser");
+                if (!result.Success || string.IsNullOrEmpty(result.Value))
+                {
+                    NavigationManager.NavigateTo("/Login", forceLoad: true);
+                    return;
+                }
+
+                welcomeUser = result.Value;
+                PopulateFilters();
+                LoadProspects();
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error during Dashboard initialization.");
+                NavigationManager.NavigateTo("/Login", forceLoad: true);
+            }
+        }
+    }
+
+    private void PopulateFilters()
+    {
+        try
+        {
+            using (var db = new ProductLaunchContext())
+            {
+                countries = db.Countries.OrderBy(x => x.CountryName).ToList();
+                roles = db.Roles.OrderBy(x => x.RoleName).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error populating filters.");
+        }
+    }
+
+    private void LoadProspects()
+    {
+        try
+        {
+            using (var db = new ProductLaunchContext())
+            {
+                var q = db.Prospects.Include("Country").Include("Role").AsQueryable();
+
+                if (!string.IsNullOrEmpty(selectedCountry))
+                    q = q.Where(x => x.Country.CountryCode == selectedCountry);
+                if (!string.IsNullOrEmpty(selectedRole))
+                    q = q.Where(x => x.Role.RoleCode == selectedRole);
+                if (!string.IsNullOrEmpty(searchText))
+                    q = q.Where(x => x.FirstName.Contains(searchText)
+                                  || x.LastName.Contains(searchText)
+                                  || x.EmailAddress.Contains(searchText));
+
+                var list = q.ToList();
+                lblTotal = "Total Prospects: " + list.Count;
+                prospects = list;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading prospects.");
+        }
+    }
+
+    private void CountrySelectionChanged(ChangeEventArgs e)
+    {
+        selectedCountry = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private void RoleSelectionChanged(ChangeEventArgs e)
+    {
+        selectedRole = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private void btnFilter_Click()
+    {
+        LoadProspects();
+    }
+
+    private async Task btnExport_Click()
+    {
+        try
+        {
+            using (var db = new ProductLaunchContext())
+            {
+                var allProspects = db.Prospects.Include("Country").Include("Role").ToList();
+                var csv = new StringBuilder();
+                csv.AppendLine("FirstName,LastName,Email,Company,Country,Role");
+                foreach (var p in allProspects)
+                {
+                    csv.AppendLine($"{p.FirstName},{p.LastName},{p.EmailAddress},{p.CompanyName},{p.Country?.CountryName},{p.Role?.RoleName}");
+                }
+
+                var csvContent = csv.ToString();
+                var bytes = Encoding.UTF8.GetBytes(csvContent);
+                var base64 = Convert.ToBase64String(bytes);
+                await JSRuntime.InvokeVoidAsync(
+                    "eval",
+                    $"(function(){{var a=document.createElement('a');a.href='data:text/csv;base64,{base64}';a.download='prospects.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);}})();"
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error exporting CSV.");
+        }
+    }
+
+    private async Task btnLogout_Click()
+    {
+        try
+        {
+            await ProtectedSessionStore.DeleteAsync("AdminUser");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error during logout.");
+        }
+        finally
+        {
+            NavigationManager.NavigateTo("/Login", forceLoad: true);
+        }
+    }
+}

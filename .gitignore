@@ -1,5 +1,44 @@
-.vs/
+# Build results
 bin/
 obj/
+
+# Visual Studio files
+.vs/
 *.user
 *.suo
+
+# NuGet
+packages/
+*.nupkg
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IIS Express
+.vs/config/
+
+# App_Data (optional – if DB files present)
+App_Data/*.mdf
+App_Data/*.ldf# Build results
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+
+# NuGet
+packages/
+*.nupkg
+
+
+
+
+
+
+

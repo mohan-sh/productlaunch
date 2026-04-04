@@ -1,0 +1,90 @@
+@namespace ProductLaunch.Web.Components.Pages.Admin.Login
+
+@page "/Login"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.Extensions.Logging
+@using ProductLaunch.Model
+@using System.Linq
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject NavigationManager Navigation
+@inject ILogger<Login> Logger
+
+<div class="container" style="max-width:400px; margin-top:100px;">
+    <h2>Admin Login</h2>
+    <EditForm Model="@loginModel" OnValidSubmit="btnLogin_Click" FormName="LoginForm">
+        <div class="form-group">
+            <label>Username</label>
+            <InputText @bind-Value="loginModel.Username" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <InputText @bind-Value="loginModel.Password" class="form-control" type="password" />
+        </div>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <span style="color:red;">@errorMessage</span>
+        }
+        <br />
+        <button type="submit" class="btn btn-primary">Login</button>
+    </EditForm>
+</div>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await ProtectedSessionStore.GetAsync<string>("AdminUser");
+            if (result.Success && !string.IsNullOrEmpty(result.Value))
+            {
+                Navigation.NavigateTo("/Dashboard");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error checking session on Login page initialization.");
+        }
+    }
+
+    private async Task btnLogin_Click()
+    {
+        var username = loginModel.Username?.Trim();
+        var password = loginModel.Password;
+
+        try
+        {
+            using (var db = new ProductLaunchContext())
+            {
+                var admin = db.AdminUsers
+                    .FirstOrDefault(a => a.Username == username && a.Password == password);
+
+                if (admin != null)
+                {
+                    await ProtectedSessionStore.SetAsync("AdminUser", admin.Username);
+                    Navigation.NavigateTo("/Dashboard");
+                }
+                else
+                {
+                    errorMessage = "Invalid username or password.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error during login attempt for user: {Username}", username);
+            errorMessage = "An error occurred during login. Please try again.";
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}

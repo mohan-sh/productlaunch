@@ -1,0 +1,144 @@
+@namespace ProductLaunch.Web.Components.Pages.SignUp
+
+@page "/SignUp"
+@rendermode InteractiveServer
+
+@using ProductLaunch.Entities
+@using ProductLaunch.Model
+@using ProductLaunch.Web.Services
+@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Logging
+@using System.Collections.Generic
+@using System.Linq
+
+@inject ILogger<SignUp> Logger
+@inject NavigationManager NavigationManager
+
+<div class="jumbotron">
+    <h1>Sign me up!</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Just a few details</h2>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="txtFirstName">First Name</label>
+    <input class="form-control" id="txtFirstName" @bind="firstName" />
+</div>
+<div class="form-group">
+    <label for="txtLastName">Last Name</label>
+    <input class="form-control" id="txtLastName" @bind="lastName" />
+</div>
+<div class="form-group">
+    <label for="txtEmail">Email Address</label>
+    <input class="form-control" id="txtEmail" @bind="email" />
+</div>
+<div class="form-group">
+    <label for="ddlCountry">Country</label>
+    <select class="form-control" id="ddlCountry" value="@selectedCountryCode" @onchange="CountrySelectionChanged">
+        @foreach (var country in _Countries.Values.OrderBy(x => x.CountryName))
+        {
+            <option value="@country.CountryCode">@country.CountryName</option>
+        }
+    </select>
+</div>
+<div class="form-group">
+    <label for="txtCompanyName">Company Name</label>
+    <input class="form-control" id="txtCompanyName" @bind="companyName" />
+</div>
+<div class="form-group">
+    <label for="ddlRole">Your Main Role</label>
+    <select class="form-control" id="ddlRole" value="@selectedRoleCode" @onchange="RoleSelectionChanged">
+        @foreach (var role in _Roles.Values.OrderBy(x => x.RoleName))
+        {
+            <option value="@role.RoleCode">@role.RoleName</option>
+        }
+    </select>
+</div>
+
+<button class="btn btn-default" @onclick="btnGo_Click">Go!</button>
+
+@code {
+    private static Dictionary<string, Country> _Countries = new Dictionary<string, Country>();
+    private static Dictionary<string, Role> _Roles = new Dictionary<string, Role>();
+
+    private string firstName = string.Empty;
+    private string lastName = string.Empty;
+    private string email = string.Empty;
+    private string companyName = string.Empty;
+    private string selectedCountryCode = string.Empty;
+    private string selectedRoleCode = string.Empty;
+
+    public static void PreloadStaticDataCache()
+    {
+        _Countries = new Dictionary<string, Country>();
+        _Roles = new Dictionary<string, Role>();
+        using (var context = new ProductLaunchContext())
+        {
+            foreach (var country in context.Countries.OrderBy(x => x.CountryName))
+                _Countries[country.CountryCode] = country;
+            foreach (var role in context.Roles.OrderBy(x => x.RoleName))
+                _Roles[role.RoleCode] = role;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (_Countries.Count == 0 || _Roles.Count == 0)
+        {
+            PreloadStaticDataCache();
+        }
+
+        selectedCountryCode = _Countries.Keys.FirstOrDefault() ?? string.Empty;
+        selectedRoleCode = _Roles.Keys.FirstOrDefault() ?? string.Empty;
+    }
+
+    private void CountrySelectionChanged(ChangeEventArgs e)
+    {
+        selectedCountryCode = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private void RoleSelectionChanged(ChangeEventArgs e)
+    {
+        selectedRoleCode = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private void btnGo_Click()
+    {
+        try
+        {
+            if (!_Countries.TryGetValue(selectedCountryCode, out var country))
+            {
+                Logger.LogWarning("Selected country code '{CountryCode}' not found in cache.", selectedCountryCode);
+                return;
+            }
+
+            if (!_Roles.TryGetValue(selectedRoleCode, out var role))
+            {
+                Logger.LogWarning("Selected role code '{RoleCode}' not found in cache.", selectedRoleCode);
+                return;
+            }
+
+            var prospect = new Prospect
+            {
+                FirstName    = firstName,
+                LastName     = lastName,
+                EmailAddress = email,
+                CompanyName  = companyName,
+                Country      = country,
+                Role         = role
+            };
+
+            new NatsPublisher().PublishProspect(prospect);
+
+            NavigationManager.NavigateTo("/ThankYou");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error occurred while signing up prospect.");
+        }
+    }
+}

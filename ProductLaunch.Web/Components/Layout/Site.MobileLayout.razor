@@ -1,0 +1,26 @@
+
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+    <div>
+        <h1>Mobile Master Page</h1>
+        @Body
+        <section class="content-wrapper main-content clear-fix">
+            @Body
+        </section>
+        <ViewSwitcher />
+    </div>
+</body>
+</html>
+
+@code {
+    protected override void OnInitialized()
+    {
+    }
+}

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11620.152
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductLaunch.Web", "ProductLaunch.Web\ProductLaunch.Web.csproj", "{17A57CF4-A6C1-47C1-AA38-650DB6D87F8F}"
 EndProject
@@ -14,6 +14,15 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductLaunch.Model.Tests", "ProductLaunch.Model.Tests\ProductLaunch.Model.Tests.csproj", "{49FD06C3-CD52-425A-866D-831D09268CD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductLaunch.EndToEndTests", "ProductLaunch.EndToEndTests\ProductLaunch.EndToEndTests.csproj", "{D47CF813-DE0E-4CC4-B9ED-8EE4B6F14869}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6EE5FE56-1F9A-49C7-84DE-95426D0CCF6D}"
+	ProjectSection(SolutionItems) = preProject
+		DBHelper.cs = DBHelper.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductLaunch.MessageHandlers.SaveProspect", "ProductLaunch.MessageHandlers.SaveProspect\ProductLaunch.MessageHandlers.SaveProspect.csproj", "{65089C80-27F1-4744-979B-4C5A33B0CFF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductLaunch.Messaging", "ProductLaunch.Messaging\ProductLaunch.Messaging.csproj", "{E02EFF91-8C52-4DCE-8279-3FD1EE0659EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +50,14 @@ Global
 		{D47CF813-DE0E-4CC4-B9ED-8EE4B6F14869}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D47CF813-DE0E-4CC4-B9ED-8EE4B6F14869}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D47CF813-DE0E-4CC4-B9ED-8EE4B6F14869}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65089C80-27F1-4744-979B-4C5A33B0CFF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65089C80-27F1-4744-979B-4C5A33B0CFF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65089C80-27F1-4744-979B-4C5A33B0CFF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65089C80-27F1-4744-979B-4C5A33B0CFF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E02EFF91-8C52-4DCE-8279-3FD1EE0659EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E02EFF91-8C52-4DCE-8279-3FD1EE0659EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E02EFF91-8C52-4DCE-8279-3FD1EE0659EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E02EFF91-8C52-4DCE-8279-3FD1EE0659EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,5 +65,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{49FD06C3-CD52-425A-866D-831D09268CD0} = {4AAE4C5C-129D-46D3-9B08-19F32FB8C60D}
 		{D47CF813-DE0E-4CC4-B9ED-8EE4B6F14869} = {4AAE4C5C-129D-46D3-9B08-19F32FB8C60D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E632A9E-EED9-4741-BB35-01A9997FBA1B}
 	EndGlobalSection
 EndGlobal

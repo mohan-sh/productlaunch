@@ -1,5 +1,6 @@
-﻿using ProductLaunch.Entities;
+using ProductLaunch.Entities;
 using ProductLaunch.Model;
+using ProductLaunch.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,13 +21,9 @@ namespace ProductLaunch.Web
             using (var context = new ProductLaunchContext())
             {
                 foreach (var country in context.Countries.OrderBy(x => x.CountryName))
-                {
                     _Countries[country.CountryCode] = country;
-                }
                 foreach (var role in context.Roles.OrderBy(x => x.RoleName))
-                {
                     _Roles[role.RoleCode] = role;
-                }
             }
         }
 
@@ -42,7 +39,7 @@ namespace ProductLaunch.Web
         private void PopulateRoles()
         {
             ddlRole.Items.Clear();
-            ddlRole.Items.AddRange(_Roles.Select(x => new ListItem(x.Value.RoleName, x.Key)).ToArray()); 
+            ddlRole.Items.AddRange(_Roles.Select(x => new ListItem(x.Value.RoleName, x.Key)).ToArray());
         }
 
         private void PopulateCountries()
@@ -53,28 +50,17 @@ namespace ProductLaunch.Web
 
         protected void btnGo_Click(object sender, EventArgs e)
         {
-            var country = _Countries[ddlCountry.SelectedValue];
-            var role = _Roles[ddlRole.SelectedValue];
-
             var prospect = new Prospect
             {
-                CompanyName = txtCompanyName.Text,
+                FirstName   = txtFirstName.Text,
+                LastName    = txtLastName.Text,
                 EmailAddress = txtEmail.Text,
-                FirstName = txtFirstName.Text,
-                LastName = txtLastName.Text,
-                Country = country,
-                Role = role
+                CompanyName = txtCompanyName.Text,
+                Country     = _Countries[ddlCountry.SelectedValue],
+                Role        = _Roles[ddlRole.SelectedValue]
             };
 
-            using (var context = new ProductLaunchContext())
-            {
-                //reload child objects:
-                prospect.Country = context.Countries.Single(x => x.CountryCode == prospect.Country.CountryCode);
-                prospect.Role = context.Roles.Single(x => x.RoleCode == prospect.Role.RoleCode);
-
-                context.Prospects.Add(prospect);
-                context.SaveChanges();
-            }
+            new NatsPublisher().PublishProspect(prospect);
 
             Server.Transfer("ThankYou.aspx");
         }

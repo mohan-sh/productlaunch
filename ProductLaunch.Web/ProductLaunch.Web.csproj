@@ -43,20 +43,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.4.3.1\lib\net40\EntityFramework.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="NATS.Client, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NATS.Client.0.7.0\lib\net45\NATS.Client.DLL</HintPath>
-      <Private>True</Private>
+    <Reference Include="NATS.Client, Version=1.1.8.0, Culture=neutral, PublicKeyToken=5b58bc7249e111a9, processorArchitecture=MSIL">
+      <HintPath>..\packages\NATS.Client.1.1.8\lib\netstandard2.0\NATS.Client.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Drawing" />
@@ -117,6 +117,8 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="Admin\Login.aspx" />
+    <Content Include="Admin\Dashboard.aspx" />
     <Content Include="SignUp.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -177,6 +179,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
@@ -186,7 +191,6 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Config.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -194,6 +198,18 @@
     <Compile Include="Contact.aspx.designer.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Services\NatsPublisher.cs" />
     <Compile Include="SignUp.aspx.cs">
       <DependentUpon>SignUp.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -242,9 +258,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ProductLaunch.EndToEndTests\ProductLaunch.EndToEndTests.csproj">
+      <Project>{d47cf813-de0e-4cc4-b9ed-8ee4b6f14869}</Project>
+      <Name>ProductLaunch.EndToEndTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProductLaunch.Entities\ProductLaunch.Entities.csproj">
       <Project>{f1bbb80f-eb0c-41b6-a7a9-7994fb3fe5e8}</Project>
       <Name>ProductLaunch.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProductLaunch.MessageHandlers.SaveProspect\ProductLaunch.MessageHandlers.SaveProspect.csproj">
+      <Project>{65089c80-27f1-4744-979b-4c5a33b0cff6}</Project>
+      <Name>ProductLaunch.MessageHandlers.SaveProspect</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProductLaunch.Messaging\ProductLaunch.Messaging.csproj">
+      <Project>{e02eff91-8c52-4dce-8279-3fd1ee0659ef}</Project>
+      <Name>ProductLaunch.Messaging</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProductLaunch.Model\ProductLaunch.Model.csproj">
       <Project>{3AFC4A48-5DB6-48FF-A459-20EC21A2EB28}</Project>

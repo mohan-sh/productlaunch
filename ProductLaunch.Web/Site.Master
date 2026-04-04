@@ -39,6 +39,16 @@
             </Scripts>
         </asp:ScriptManager>
 
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Product Launch</a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/Admin/Login.aspx">Admin</a></li>
+                </ul>
+            </div>
+        </nav>
         <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>

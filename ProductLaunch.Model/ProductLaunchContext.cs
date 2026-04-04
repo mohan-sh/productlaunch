@@ -13,6 +13,8 @@ namespace ProductLaunch.Model
 
         public DbSet<Prospect> Prospects { get; set; }
 
+        public DbSet<AdminUser> AdminUsers { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder builder)
         {
             builder.Entity<Country>().HasKey(c => c.CountryCode);

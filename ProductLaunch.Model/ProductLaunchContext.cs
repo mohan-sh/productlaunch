@@ -5,7 +5,10 @@ namespace ProductLaunch.Model
 {
     public class ProductLaunchContext : DbContext
     {
-        public ProductLaunchContext() : base("ProductLaunchDb") { }
+        public static string ConnectionString { get; set; } = "name=ProductLaunchDb";
+
+        public ProductLaunchContext() : base(ConnectionString) { }
+        public ProductLaunchContext(string connectionString) : base(connectionString) { }
 
         public DbSet<Country> Countries { get; set; }
 

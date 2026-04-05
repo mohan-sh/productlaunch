@@ -4,12 +4,15 @@
     <AssemblyName>ProductLaunch.Model</AssemblyName>
     <OutputType>Library</OutputType>
     <RootNamespace>ProductLaunch.Model</RootNamespace>
-    <TargetFramework>net8.0</TargetFramework>
+	  <TargetFramework>net10.0</TargetFramework>
     <LangVersion>12</LangVersion>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="3.1.0" />
+    <PackageReference Include="NUnit" Version="4.5.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.7.0" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
@@ -18,5 +21,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../ProductLaunch.Entities/ProductLaunch.Entities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

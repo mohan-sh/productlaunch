@@ -1,0 +1,8 @@
+
+{
+  "$schema": "https://go.specflow.org/json-schema",
+  "bindingCulture": {
+    "language": "en-US"
+  },
+  "stepAssemblies": []
+}

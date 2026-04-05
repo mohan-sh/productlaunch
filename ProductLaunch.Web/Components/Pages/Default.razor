@@ -6,40 +6,46 @@
 @using Microsoft.Extensions.Logging
 @inject ILogger<Default> Logger
 
-<PageTitle>Home Page</PageTitle>
+<PageTitle>Home &mdash; ProductLaunch</PageTitle>
 
-<div class="jumbotron">
-    <h1>We&#39;re launching a new course!</h1>
-    <p class="lead">The new course by School of Devops is a step by step Devops Mastery program.</p>
+<div class="p-5 mb-4 bg-dark text-white rounded-3">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold">We&#39;re launching a new course!</h1>
+        <p class="col-md-8 fs-5 text-secondary">The new course by School of Devops is a step-by-step Devops Mastery program.</p>
+        <NavLink class="btn btn-primary btn-lg" href="/SignUp">Sign Up Now &raquo;</NavLink>
+    </div>
 </div>
 
-<div class="row">
+<div class="row g-4">
     <div class="col-md-8">
-        <h2>What&#39;s this application about?</h2>
-        <p>
-            If you see this page, congratualations !!  You have successfully deployed a ASP .NET Framework application which is running with a IIS server,  with SQL Server in the backend.
-        </p>
-        <p>
-            This is a sample ASP .NET Framework legacy application, created for trying out devops practices such as containerisation, continuous integration and delivery with Docker, Kubernetes and Azure. Its derived from a legacy application orginally created by Docker and relased under Apache 2 License. Its been simplified and made compatible with the latest versions of the docker images. Feel free to use it, share it and create your own spin of it.
-        </p>
-        <p>
-            <a class="btn btn-default" href="https://www.schoolofdevops.com">Check Out Our Complete Course Portfolio &raquo;</a>
-        </p>
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="card-title">What&#39;s this application about?</h2>
+                <p class="text-muted">
+                    If you see this page, congratulations! You have successfully deployed an ASP .NET application
+                    running with SQL Server in the backend.
+                </p>
+                <p class="text-muted">
+                    This is a sample legacy application modernised for DevOps practices such as containerisation,
+                    continuous integration and delivery with Docker, Kubernetes and Azure.
+                </p>
+                <a class="btn btn-outline-primary" href="https://www.schoolofdevops.com" target="_blank">
+                    Check Out Our Complete Course Portfolio &raquo;
+                </a>
+            </div>
+        </div>
     </div>
     <div class="col-md-4">
-        <h2>Interested?</h2>
-        <p>
-            Give us your details and we&#39;ll keep you posted.
-        </p>
-        <p>
-            It only takes 30 seconds to sign up.
-        </p>
-        <p>
-            And we probably won't spam you very much.
-        </p>
-        <p>
-            <NavLink class="btn btn btn-primary btn-lg" href="/SignUp">Sign Up &raquo;</NavLink>
-        </p>
+        <div class="card h-100 border-0 shadow-sm bg-primary text-white">
+            <div class="card-body p-4 d-flex flex-column justify-content-between">
+                <div>
+                    <h2 class="card-title">Interested?</h2>
+                    <p>Give us your details and we&#39;ll keep you posted.</p>
+                    <p>It only takes 30 seconds to sign up.</p>
+                </div>
+                <NavLink class="btn btn-light fw-semibold mt-3" href="/SignUp">Sign Up &raquo;</NavLink>
+            </div>
+        </div>
     </div>
 </div>
 

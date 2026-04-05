@@ -1,4 +1,4 @@
-
+﻿
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,8 +47,10 @@ namespace ProductLaunch.Web
             // Register ProductLaunchContext as a scoped service using the connection
             // string from appsettings.json (migrated from Web.config <connectionStrings>).
             // The EF6 DbContext constructor accepts a connection string directly.
+            var connectionString = builder.Configuration.GetConnectionString("ProductLaunchDb");
+            ProductLaunch.Model.ProductLaunchContext.ConnectionString = connectionString;
             builder.Services.AddScoped(_ =>
-                new ProductLaunchContext());
+                new ProductLaunchContext(connectionString));
 
             // Register the EF6 database initializer (migrated from
             // Database.SetInitializer<ProductLaunchContext>(new StaticDataInitializer())

@@ -1,7 +1,6 @@
-@namespace ProductLaunch.Web.Components.Pages.Admin.Dashboard
-
 @page "/Dashboard"
 @rendermode InteractiveServer
+@using ProductLaunch.Entities
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using ProductLaunch.Model
 @using System.Linq
@@ -47,7 +46,7 @@
             <input type="text"
                    class="form-control"
                    placeholder="Search name or email"
-                   @bind="searchText" />
+                   @bind="searchText" @bind:event="oninput" />
         </div>
         <div class="col-sm-3">
             <button class="btn btn-primary" @onclick="btnFilter_Click">Filter</button>
@@ -185,6 +184,14 @@
         LoadProspects();
     }
 
+    private static string CsvEscape(string value)
+    {
+        if (string.IsNullOrEmpty(value)) return string.Empty;
+        if (value.Contains(',') || value.Contains('"') || value.Contains('\n'))
+            return "\"" + value.Replace("\"", "\"\"") + "\"";
+        return value;
+    }
+
     private async Task btnExport_Click()
     {
         try
@@ -196,16 +203,18 @@
                 csv.AppendLine("FirstName,LastName,Email,Company,Country,Role");
                 foreach (var p in allProspects)
                 {
-                    csv.AppendLine($"{p.FirstName},{p.LastName},{p.EmailAddress},{p.CompanyName},{p.Country?.CountryName},{p.Role?.RoleName}");
+                    csv.AppendLine(string.Join(",",
+                        CsvEscape(p.FirstName),
+                        CsvEscape(p.LastName),
+                        CsvEscape(p.EmailAddress),
+                        CsvEscape(p.CompanyName),
+                        CsvEscape(p.Country?.CountryName),
+                        CsvEscape(p.Role?.RoleName)));
                 }
 
-                var csvContent = csv.ToString();
-                var bytes = Encoding.UTF8.GetBytes(csvContent);
+                var bytes = Encoding.UTF8.GetBytes(csv.ToString());
                 var base64 = Convert.ToBase64String(bytes);
-                await JSRuntime.InvokeVoidAsync(
-                    "eval",
-                    $"(function(){{var a=document.createElement('a');a.href='data:text/csv;base64,{base64}';a.download='prospects.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);}})();"
-                );
+                await JSRuntime.InvokeVoidAsync("downloadCsv", base64, "prospects.csv");
             }
         }
         catch (Exception ex)
